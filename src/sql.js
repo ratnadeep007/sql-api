@@ -91,6 +91,19 @@ class SQL {
 
     /**
      * 
+     * @param {string} tableName 
+     * @returns {SQL}
+     */
+    delete = (tableName) => {
+        if (this.queryString) {
+            throw Error('delete must be called before any other function');
+        }
+        this.queryString = `DELETE FROM ${tableName}`;
+        return this;
+    }
+
+    /**
+     * 
      * @param {string[]} valueList 
      * @returns {SQL}
      */
@@ -125,7 +138,7 @@ class SQL {
      * @returns {SQL}
      */
     where = (column, value, conditional = ConditionalEnums.EQ) => {
-        if (!this.queryString || !this.queryString.includes('SELECT') || !this.queryString.includes('FROM')) {
+        if (!this.queryString) {
             throw Error('select and from should be called before any conditional');
         }
         const valConverted = parseFloat(value);
@@ -153,7 +166,7 @@ class SQL {
      * @returns {SQL}
      */
     and = () => {
-        if (!this.queryString || !this.queryString.includes('SELECT') || !this.queryString.includes('FROM')) {
+        if (!this.queryString) {
             throw Error('select and from should be called before any conditional');
         }
         if (!this.queryString.includes('WHERE')) {
@@ -168,7 +181,7 @@ class SQL {
      * @returns {SQL}
      */
     or = () => {
-        if (!this.queryString || !this.queryString.includes('SELECT') || !this.queryString.includes('FROM')) {
+        if (!this.queryString) {
             throw Error('select and from should be called before any conditional');
         }
         if (!this.queryString.includes('WHERE')) {

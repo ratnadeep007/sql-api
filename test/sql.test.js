@@ -105,4 +105,65 @@ describe("SQL API Test", () => {
             .execute();
         expect(sql.queryString).toBe("INSERT INTO records (username,email,age) VALUES ('test4','test11@example.com','12') RETURNING *;");
     });
+
+    test('delete with single clause', async () =>{
+        await sql
+            .delete('records')
+            .where('age', '12', sql.conditionalEnums.GT)
+            .execute();
+        expect(sql.queryString).toBe("DELETE FROM records WHERE age > 12;");
+    });
+
+    test('delete with multiple clause (and)', async () =>{
+        await sql
+            .delete('records')
+            .where('age', '12', sql.conditionalEnums.GT)
+            .and()
+            .where('age', '12', sql.conditionalEnums.LT)
+            .execute();
+        expect(sql.queryString).toBe("DELETE FROM records WHERE age > 12 AND age < 12;");
+    });
+
+    test('delete with multiple clause (and)', async () =>{
+        await sql
+            .delete('records')
+            .where('age', '12', sql.conditionalEnums.GT)
+            .or()
+            .where('age', '12', sql.conditionalEnums.LT)
+            .execute();
+        expect(sql.queryString).toBe("DELETE FROM records WHERE age > 12 OR age < 12;");
+    });
+
+    test('delete with return all', async () =>{
+        await sql
+            .delete('records')
+            .where('age', '12', sql.conditionalEnums.GT)
+            .or()
+            .where('age', '12', sql.conditionalEnums.LT)
+            .returns(['*'])
+            .execute();
+        expect(sql.queryString).toBe("DELETE FROM records WHERE age > 12 OR age < 12 RETURNING *;");
+    });
+
+    test('delete with return single column', async () =>{
+        await sql
+            .delete('records')
+            .where('age', '12', sql.conditionalEnums.GT)
+            .or()
+            .where('age', '12', sql.conditionalEnums.LT)
+            .returns(['email'])
+            .execute();
+        expect(sql.queryString).toBe("DELETE FROM records WHERE age > 12 OR age < 12 RETURNING email;");
+    });
+
+    test('delete with return multiple column', async () =>{
+        await sql
+            .delete('records')
+            .where('age', '12', sql.conditionalEnums.GT)
+            .or()
+            .where('age', '12', sql.conditionalEnums.LT)
+            .returns(['email', 'username'])
+            .execute();
+        expect(sql.queryString).toBe("DELETE FROM records WHERE age > 12 OR age < 12 RETURNING email,username;");
+    });
 })
