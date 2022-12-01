@@ -66,9 +66,6 @@ class SQL {
      * @returns {SQL}
      */
     select = (columnList) => {
-        if (this.queryString) {
-            throw Error('select must be called before any other function');
-        }
         this.queryString = 'SELECT ';
         this.queryString += columnList.join(', ');
         return this;
@@ -80,9 +77,6 @@ class SQL {
      * @returns {SQL}
      */
     insert = (tableName, columnList) => {
-        if (this.queryString) {
-            throw Error('insert must be called before any other function');
-        }
         this.queryString = `INSERT INTO ${tableName} (`;
         this.queryString += columnList.join(',');
         this.queryString += ')';
@@ -95,10 +89,6 @@ class SQL {
      * @returns {SQL}
      */
     update = (tableName) => {
-        if (this.queryString) {
-            throw Error('update must be called before any other function');
-        }
-
         this.queryString = `UPDATE ${tableName}`;
         return this;
     }
@@ -109,9 +99,6 @@ class SQL {
      * @returns {SQL}
      */
     delete = (tableName) => {
-        if (this.queryString) {
-            throw Error('delete must be called before any other function');
-        }
         this.queryString = `DELETE FROM ${tableName}`;
         return this;
     }
