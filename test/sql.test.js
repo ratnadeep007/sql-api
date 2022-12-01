@@ -1,6 +1,6 @@
 const SQL = require('../src/sql');
 
-describe("SQL API Test", () => {
+describe("POSTGRES API Test", () => {
     let sql;
 
     beforeEach(() => {
@@ -165,5 +165,103 @@ describe("SQL API Test", () => {
             .returns(['email', 'username'])
             .execute();
         expect(sql.queryString).toBe("DELETE FROM records WHERE age > 12 OR age < 12 RETURNING email,username;");
+    });
+
+    test('update single column without clause', async () => {
+        await sql
+            .update('records')
+            .set('age', '12')
+            .execute();
+        expect(sql.queryString).toBe("UPDATE records SET age = '12';");
+    });
+
+    test('update single column with single clause', async () => {
+        await sql
+            .update('records')
+            .set('age', '12')
+            .where('email', 'ratnadeep', sql.conditionalEnums.EQ)
+            .execute();
+        expect(sql.queryString).toBe("UPDATE records SET age = '12' WHERE email = 'ratnadeep';");
+    });
+
+    test('update single column with multiple clause', async () => {
+        await sql
+            .update('records')
+            .set('age', '12')
+            .where('email', 'ratnadeep', sql.conditionalEnums.EQ)
+            .and()
+            .where('id', '12')
+            .execute();
+        expect(sql.queryString).toBe("UPDATE records SET age = '12' WHERE email = 'ratnadeep' AND id = 12;");
+    });
+
+    test('update multiple column without clause', async () => {
+        await sql
+            .update('records')
+            .set('age', '12')
+            .set('email', 'ratnadeep')
+            .execute();
+        expect(sql.queryString).toBe("UPDATE records SET age = '12', email = 'ratnadeep';");
+    });
+
+    test('update multiple column with single clause', async () => {
+        await sql
+            .update('records')
+            .set('age', '12')
+            .set('email', 'ratnadeep')
+            .where('email', 'ratnadeep', sql.conditionalEnums.EQ)
+            .execute();
+        expect(sql.queryString).toBe("UPDATE records SET age = '12', email = 'ratnadeep' WHERE email = 'ratnadeep';");
+    });
+
+    test('update multiple column with multiple clause', async () => {
+        await sql
+            .update('records')
+            .set('age', '12')
+            .set('email', 'ratnadeep')
+            .where('email', 'ratnadeep', sql.conditionalEnums.EQ)
+            .and()
+            .where('id', '12')
+            .execute();
+        expect(sql.queryString).toBe("UPDATE records SET age = '12', email = 'ratnadeep' WHERE email = 'ratnadeep' AND id = 12;");
+    });
+
+    test('update with all return', async () => {
+        await sql
+            .update('records')
+            .set('age', '12')
+            .set('email', 'ratnadeep')
+            .where('email', 'ratnadeep', sql.conditionalEnums.EQ)
+            .and()
+            .where('id', '12')
+            .returns(['*'])
+            .execute();
+        expect(sql.queryString).toBe("UPDATE records SET age = '12', email = 'ratnadeep' WHERE email = 'ratnadeep' AND id = 12 RETURNING *;");
+    });
+
+    test('update with single column return', async () => {
+        await sql
+            .update('records')
+            .set('age', '12')
+            .set('email', 'ratnadeep')
+            .where('email', 'ratnadeep', sql.conditionalEnums.EQ)
+            .and()
+            .where('id', '12')
+            .returns(['username'])
+            .execute();
+        expect(sql.queryString).toBe("UPDATE records SET age = '12', email = 'ratnadeep' WHERE email = 'ratnadeep' AND id = 12 RETURNING username;");
+    });
+
+    test('update with multiple column return', async () => {
+        await sql
+            .update('records')
+            .set('age', '12')
+            .set('email', 'ratnadeep')
+            .where('email', 'ratnadeep', sql.conditionalEnums.EQ)
+            .and()
+            .where('id', '12')
+            .returns(['username', 'email'])
+            .execute();
+        expect(sql.queryString).toBe("UPDATE records SET age = '12', email = 'ratnadeep' WHERE email = 'ratnadeep' AND id = 12 RETURNING username,email;");
     });
 })

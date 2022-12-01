@@ -94,11 +94,43 @@ class SQL {
      * @param {string} tableName 
      * @returns {SQL}
      */
+    update = (tableName) => {
+        if (this.queryString) {
+            throw Error('update must be called before any other function');
+        }
+
+        this.queryString = `UPDATE ${tableName}`;
+        return this;
+    }
+
+    /**
+     * 
+     * @param {string} tableName 
+     * @returns {SQL}
+     */
     delete = (tableName) => {
         if (this.queryString) {
             throw Error('delete must be called before any other function');
         }
         this.queryString = `DELETE FROM ${tableName}`;
+        return this;
+    }
+
+    /**
+     * 
+     * @param {string} column 
+     * @param {string} value 
+     * @returns 
+     */
+    set = (column, value) => {
+        if (!this.queryString.includes('UPDATE')) {
+            throw Error('set must be called after update');
+        }
+        if (!this.queryString.includes('SET')) {
+            this.queryString += ` SET ${column} = '${value}'`;
+        } else {
+            this.queryString += `, ${column} = '${value}'`;
+        }
         return this;
     }
 
